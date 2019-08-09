@@ -38,7 +38,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 
 %changelog
-* Fri Aug 0l 2019 Dave Dykstra <dwd@fnal.gov>> - 0.4.2-1
+* Fri Aug 09 2019 Dave Dykstra <dwd@fnal.gov>> - 0.4.2-1
 - Prevent crashing on new "Y" .cvmfspublished key
 
 * Fri Apr 06 2018 Dave Dykstra <dwd@fnal.gov>> - 0.4.1-2
