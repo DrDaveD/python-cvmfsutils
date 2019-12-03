@@ -1,5 +1,5 @@
 # OBS expects the name %release_prefix; do not change the name
-%define release_prefix 1
+%define release_prefix 2
 
 Summary: Inspect CernVM-FS repositories
 Name: python-cvmfsutils
@@ -12,9 +12,14 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
 Vendor: Rene Meusel <rene.meusel@cern.ch>
-Requires: python-requests >= 1.1.0 python-dateutil >= 1.4.1
 Url: http://cernvm.cern.ch
-BuildRequires: python-setuptools
+%if 0%{?el8}
+%define pyth python2
+%else
+%define pyth python
+%endif
+Requires: %{pyth}-requests >= 1.1.0 %{pyth}-dateutil >= 1.4.1
+BuildRequires: %{pyth}-setuptools
 
 %description
 The CernVM-FS python package allows for the inspection of CernVM-FS
@@ -26,10 +31,10 @@ files) and the history of named snapshots inside any CernVM-FS repository.
 %setup -n %{name}-%{version} -n %{name}-%{version}
 
 %build
-python setup.py build
+%{pyth} setup.py build
 
 %install
-python setup.py install --single-version-externally-managed -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
+%{pyth} setup.py install --single-version-externally-managed -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 
 %clean
 rm -rf $RPM_BUILD_ROOT
