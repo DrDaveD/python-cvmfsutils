@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import sys
 import cvmfs
@@ -29,3 +29,5 @@ for clg in revision.catalogs():
     uncomp_mb = clg.db_size() / (1024*1024)
     if (num_entries > bignum) or (uncomp_mb >= bigmb):
         print clg.root_prefix, num_entries, 'files',  uncomp_mb, 'MB'
+    del res
+    del clg
