@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -8,8 +7,8 @@ This file is part of the CernVM File System auxiliary tools.
 from datetime import datetime
 from dateutil.tz import tzutc
 
-from root_file import RootFile
-from _exceptions import *
+from .root_file import RootFile
+from ._exceptions import *
 
 
 class Manifest(RootFile):
@@ -18,7 +17,7 @@ class Manifest(RootFile):
     @staticmethod
     def open(manifest_path):
         """ Initializes a Manifest from a local file path """
-        with open(manifest_path) as manifest_file:
+        with open(manifest_path, 'rb') as manifest_file:
             return Manifest(manifest_file)
 
     def __init__(self, manifest_file):

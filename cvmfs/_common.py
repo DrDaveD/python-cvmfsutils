@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -71,26 +70,28 @@ class DatabaseObject:
 
 
 def _binary_buffer_to_hex_string(binbuf):
-    return "".join(map(lambda c: ("%0.2X" % c).lower(),map(ord,binbuf)))
+    return binbuf.hex()
 
 def _split_md5(md5digest):
     hi = lo = 0
     for i in range(0, 8):
-        lo |= (ord(md5digest[i]) << (i * 8))
+        lo |= (md5digest[i] << (i * 8))
     for i in range(8,16):
-        hi |= (ord(md5digest[i]) << ((i - 8) * 8))
+        hi |= (md5digest[i] << ((i - 8) * 8))
     return ctypes.c_int64(lo).value, ctypes.c_int64(hi).value  # signed int!
 
 def _combine_md5(lo, hi):
     md5digest = [ '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
                   '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00' ]
     for i in range(0, 8):
-        md5digest[i] = chr(lo & 0xFF)
+        b = lo & 0xFF
+        md5digest[i] = b.to_bytes(1,byteorder="big")
         lo >>= 8
     for i in range(8,16):
-        md5digest[i] = chr(hi & 0xFF)
+        b = hi & 0xFF
+        md5digest[i] = b.to_bytes(1,byteorder="big")
         hi >>= 8
-    return ''.join(md5digest)
+    return b''.join(md5digest)
 
 
 class TzInfos:

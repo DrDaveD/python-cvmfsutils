@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -9,24 +8,24 @@ import base64
 import datetime
 import hashlib
 import os
-import StringIO
+import io
 import tarfile
 import threading
 
 from M2Crypto import RSA
 
-import SimpleHTTPServer
-import SocketServer
+import http.server
+import socketserver
 
 from file_sandbox import FileSandbox
 
-class CvmfsTestServer(SocketServer.TCPServer):
+class CvmfsTestServer(socketserver.TCPServer):
     allow_reuse_address = True
     def __init__(self, document_root, bind_address, handler):
         self.document_root = document_root
-        SocketServer.TCPServer.__init__(self, bind_address, handler)
+        socketserver.TCPServer.__init__(self, bind_address, handler)
 
-class CvmfsRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class CvmfsRequestHandler(http.server.SimpleHTTPRequestHandler):
     def translate_path(self, path):
         return os.path.normpath(self.server.document_root + os.sep + path)
 
@@ -71,8 +70,8 @@ class MockRepository:
         old_whitelist = os.path.join(self.dir, ".cvmfswhitelist")
         new_whitelist = os.path.join(self.dir, ".cvmfswhitelist.new")
         wl_hash = hashlib.sha1()
-        with open(new_whitelist, 'w+') as new_wl: # TODO: more elegant is Py 2.7
-            with open(old_whitelist) as old_wl:
+        with open(new_whitelist, 'wb+') as new_wl:
+            with open(old_whitelist, errors='ignore') as old_wl:
                 pos = old_wl.tell()
                 while True:
                     line = old_wl.readline()
@@ -82,28 +81,28 @@ class MockRepository:
                         break
                     if pos == old_wl.tell():
                         raise Exception("Signature not found in whitelist")
-                    wl_hash.update(line)
-                    new_wl.write(line)
+                    wl_hash.update(line.encode())
+                    new_wl.write(line.encode())
                     pos = old_wl.tell()
-            new_wl.write("--\n")
-            new_wl.write(wl_hash.hexdigest())
-            new_wl.write("\n")
+            new_wl.write("--\n".encode())
+            new_wl.write(wl_hash.hexdigest().encode())
+            new_wl.write("\n".encode())
             key = RSA.load_key(self.master_key)
-            sig = key.private_encrypt(wl_hash.hexdigest(), RSA.pkcs1_padding)
+            sig = key.private_encrypt(wl_hash.hexdigest().encode(), RSA.pkcs1_padding)
             new_wl.write(sig)
         os.rename(new_whitelist, old_whitelist)
 
 
     def _setup_repository(self):
         self.sandbox.create_directory(self._extract_dir)
-        repo = StringIO.StringIO(base64.b64decode(MockRepository.repo_data))
+        repo = io.BytesIO(base64.b64decode(MockRepository.repo_data))
         repo_tar = tarfile.open(None, "r:gz", repo)
         repo_tar.extractall(self._extract_dir)
-        pubkey = self.sandbox.write_to_temporary(MockRepository.repo_pubkey)
+        pubkey = self.sandbox.write_to_temporary(MockRepository.repo_pubkey.encode())
         self.public_key = pubkey
-        privkey = self.sandbox.write_to_temporary(MockRepository.repo_privkey)
+        privkey = self.sandbox.write_to_temporary(MockRepository.repo_privkey.encode())
         self.private_key = privkey
-        mkey = self.sandbox.write_to_temporary(MockRepository.repo_masterkey)
+        mkey = self.sandbox.write_to_temporary(MockRepository.repo_masterkey.encode())
         self.master_key = mkey
 
 

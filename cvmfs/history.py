@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -7,7 +6,7 @@ This file is part of the CernVM File System auxiliary tools.
 
 import datetime
 
-from _common import DatabaseObject
+from ._common import DatabaseObject
 
 
 class RevisionTag:

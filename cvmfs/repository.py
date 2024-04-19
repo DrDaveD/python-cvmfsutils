@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -11,17 +10,17 @@ from datetime import datetime
 import dateutil.parser
 from dateutil.tz import tzutc
 
-import _common
-from _exceptions import RepositoryNotFound, FileNotFoundInRepository, \
+from . import _common
+from ._exceptions import RepositoryNotFound, FileNotFoundInRepository, \
     RepositoryVerificationFailed, HistoryNotFound
-from catalog import Catalog
-from certificate import Certificate
-from fetcher import RemoteFetcher, LocalFetcher
-from history import History
-from manifest import Manifest
-from revision import Revision, RevisionIterator
-from whitelist import Whitelist
-from repoinfo import RepoInfo
+from .catalog import Catalog
+from .certificate import Certificate
+from .fetcher import RemoteFetcher, LocalFetcher
+from .history import History
+from .manifest import Manifest
+from .revision import Revision, RevisionIterator
+from .whitelist import Whitelist
+from .repoinfo import RepoInfo
 
 
 class Repository(object):
@@ -63,7 +62,7 @@ class Repository(object):
             with self._fetcher.retrieve_raw_file(_common._MANIFEST_NAME) as manifest_file:
                 self.manifest = Manifest(manifest_file)
             self.fqrn = self.manifest.repository_name
-        except FileNotFoundInRepository, e:
+        except FileNotFoundInRepository as e:
             raise RepositoryNotFound(self._fetcher.source)
 
 
@@ -81,7 +80,7 @@ class Repository(object):
                 self.last_replication = self.__read_timestamp(timestamp)
             if not self.has_repository_type():
                 self.type = 'stratum1'
-        except FileNotFoundInRepository, e:
+        except FileNotFoundInRepository as e:
             self.last_replication = datetime.fromtimestamp(0, tz=tzutc())
 
     def _try_to_get_replication_state(self):
@@ -91,7 +90,7 @@ class Repository(object):
                 timestamp = rf.readline()
                 self.replicating = True
                 self.replicating_since = self.__read_timestamp(timestamp)
-        except FileNotFoundInRepository, e:
+        except FileNotFoundInRepository as e:
             pass
 
     def verify(self, public_key_path):
@@ -172,8 +171,8 @@ class Repository(object):
     def close_catalog(self, catalog):
         try:
             del self._opened_catalogs[catalog.hash]
-        except KeyError, e:
-            print "not found:" , catalog.hash
+        except KeyError as e:
+            print("not found:" , catalog.hash)
 
     def _retrieve_and_open_catalog(self, catalog_hash):
         catalog_file = self.retrieve_object(catalog_hash, 'C')

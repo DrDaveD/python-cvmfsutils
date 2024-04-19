@@ -1,9 +1,9 @@
 # OBS expects the name %release_prefix; do not change the name
-%define release_prefix 2
+%define release_prefix 1
 
 Summary: Inspect CernVM-FS repositories
 Name: python-cvmfsutils
-Version: 0.4.2
+Version: 0.5.0
 Release: %{release_prefix}%{?dist}
 Source0: %{name}-%{version}.tar.gz
 License: (c) 2015 CERN - BSD License
@@ -13,13 +13,13 @@ Prefix: %{_prefix}
 BuildArch: noarch
 Vendor: Rene Meusel <rene.meusel@cern.ch>
 Url: http://cernvm.cern.ch
-%if 0%{?el8}
-%define pyth python2
-%else
-%define pyth python
-%endif
-Requires: %{pyth}-requests >= 1.1.0 %{pyth}-dateutil >= 1.4.1
-BuildRequires: %{pyth}-setuptools
+
+BuildRequires: python-rpm-macros
+BuildRequires: python3-rpm-macros
+BuildRequires: python%{python3_pkgversion}-setuptools
+
+Requires: python%{python3_pkgversion}-dateutil
+Requires: python%{python3_pkgversion}-requests
 
 %description
 The CernVM-FS python package allows for the inspection of CernVM-FS
@@ -28,19 +28,25 @@ hierarchy, inspect CernVM-FS repository manifests (a.k.a. .cvmfspublished
 files) and the history of named snapshots inside any CernVM-FS repository.
 
 %prep
-%setup -n %{name}-%{version} -n %{name}-%{version}
+#%%setup -n %{name}-%{version} -n %{name}-%{version}
+%autosetup -n %{name}-%{version}
 
 %build
-%{pyth} setup.py build
+#python3 setup.py build
+%py3_build_wheel
 
 %install
-%{pyth} setup.py install --single-version-externally-managed -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
+#python3 setup.py install --single-version-externally-managed -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
+%py3_install_wheel python_cvmfsutils-%{version}-*.whl
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files -f INSTALLED_FILES
-%defattr(-,root,root)
+%files
+%license COPYING
+%doc README
+%{_bindir}/*
+%{python3_sitelib}/*
 
 %changelog
 * Fri Aug 09 2019 Dave Dykstra <dwd@fnal.gov>> - 0.4.2-1

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -29,7 +28,7 @@ class TestRepositoryWrapper(unittest.TestCase):
             '-----END PUBLIC KEY-----'
             ''
         ])
-        pubkey = self.sandbox.write_to_temporary(self.cern_public_key)
+        pubkey = self.sandbox.write_to_temporary(self.cern_public_key.encode())
         self.public_key_file = pubkey
 
     def tearDown(self):
@@ -125,9 +124,10 @@ class TestRepositoryWrapper(unittest.TestCase):
         rev = repo.get_current_revision()
         dirents = rev.list_directory('/')
         self.assertIsNotNone(dirents)
-        self.assertEqual(3, len(dirents))
+        self.assertEqual(3, len(list(dirents)))
         dirents = rev.list_directory('/bar/3')
         self.assertIsNotNone(dirents)
+        dirents = list(dirents)
         self.assertEqual(4, len(dirents))
         self.assertEquals('.cvmfscatalog', dirents[0].name)
         self.assertEquals('1', dirents[1].name)
@@ -140,7 +140,7 @@ class TestRepositoryWrapper(unittest.TestCase):
         # with trailing slash this time
         dirents = rev.list_directory('/bar/3/')
         self.assertIsNotNone(dirents)
-        self.assertEqual(4, len(dirents))
+        self.assertEqual(4, len(list(dirents)))
 
     def test_revision(self):
         self.mock_repo.make_valid_whitelist()
