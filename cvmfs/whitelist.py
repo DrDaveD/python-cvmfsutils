@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -11,8 +10,8 @@ from M2Crypto import RSA
 
 import re
 
-from root_file import RootFile
-from _exceptions import *
+from .root_file import RootFile
+from ._exceptions import *
 
 
 class Whitelist(RootFile):
@@ -21,7 +20,7 @@ class Whitelist(RootFile):
     @staticmethod
     def open(whitelist_path):
         """ Initializes a whitelist from a local file path """
-        with open(whitelist_path) as manifest_file:
+        with open(whitelist_path, 'rb') as manifest_file:
             return Whitelist(manifest_file)
 
     _fingerprint_re = None
@@ -91,9 +90,9 @@ class Whitelist(RootFile):
     def _verify_signature(self, public_key_path):
         pubkey = RSA.load_pub_key(public_key_path)
         try:
-            sig_sum = pubkey.public_decrypt(self.signature, RSA.pkcs1_padding)
+            sig_sum = pubkey.public_decrypt(self.signature, RSA.pkcs1_padding).decode()
             return sig_sum == self.signature_checksum
-        except RSA.RSAError, e:
+        except RSA.RSAError as e:
             return False
 
 

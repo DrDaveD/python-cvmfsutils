@@ -1,13 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 import sys
 import cvmfs
 import os
 
 def usage():
-    print "Usage: big_catalogs <local repo name | remote repo url> [BIGNUM [BIGMB]]"
-    print "  Lists all catalogs of the provided CVMFS repository with more than BIGNUM"
-    print "  files in them, default 100000, or more than BIGMB megabytes, default 50."
+    print("Usage: big_catalogs <local repo name | remote repo url> [BIGNUM [BIGMB]]")
+    print("  Lists all catalogs of the provided CVMFS repository with more than BIGNUM")
+    print("  files in them, default 100000, or more than BIGMB megabytes, default 50.")
 
 if len(sys.argv) < 2 or len(sys.argv) > 4:
     usage();
@@ -28,4 +28,6 @@ for clg in revision.catalogs():
     num_entries = res[0][0]
     uncomp_mb = clg.db_size() / (1024*1024)
     if (num_entries > bignum) or (uncomp_mb >= bigmb):
-        print clg.root_prefix, num_entries, 'files',  uncomp_mb, 'MB'
+        print(clg.root_prefix, num_entries, 'files',  uncomp_mb, 'MB')
+    del res
+    del clg

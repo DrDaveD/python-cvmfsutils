@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -24,13 +23,11 @@ binary string containing the private-key signature terminated by EOF.
 import abc
 import hashlib
 
-from _exceptions import *
+from ._exceptions import *
 
 
-class RootFile:
+class RootFile(metaclass=abc.ABCMeta):
     """ Base class for CernVM-FS repository's signed 'root files' """
-
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def _read_line(self, line):
@@ -45,6 +42,7 @@ class RootFile:
         """ Initializes a root file object from a file pointer """
         self.has_signature = False
         for line in file_object.readlines():
+            line = line.decode()
             if len(line) == 0:
                 continue
             if line[0:2] == "--":
@@ -70,7 +68,7 @@ class RootFile:
         hash_sum = hashlib.sha1()
         while True:
             line = file_object.readline()
-            if line[0:2] == "--":
+            if line.decode()[0:2] == "--":
                 break
             if pos == file_object.tell():
                 raise IncompleteRootFileSignature("Signature not found")
@@ -84,7 +82,7 @@ class RootFile:
         file_object.seek(0)
         message_digest = self._hash_over_content(file_object)
 
-        self.signature_checksum = file_object.readline().rstrip()
+        self.signature_checksum = file_object.readline().decode().rstrip()
         if len(self.signature_checksum) != 40:
             raise IncompleteRootFileSignature("Signature checksum malformed")
         if message_digest != self.signature_checksum:

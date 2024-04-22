@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
 This file is part of the CernVM File System auxiliary tools.
 """
 
-from M2Crypto import X509
+from M2Crypto import X509, RSA
 
 class Certificate:
     """ Wraps an X.509 certificate object as stored in CVMFS repositories """
@@ -33,7 +32,14 @@ class Certificate:
     def verify(self, signature, message):
         """ verify a given signature to an expected 'message' string """
         pubkey = self.openssl_certificate.get_pubkey()
+        # Can't use cert signature verify on EL9 because sha1 certs are
+        # disabled by default.
+        # Should convert to using cryptography instead of M2Crypto
+        # and use the RSAPublicKey recover_data_from_signature() function.
         pubkey.reset_context(md='sha1')
         pubkey.verify_init()
-        pubkey.verify_update(message)
-        return pubkey.verify_final(signature)
+        pubkey.verify_update(message.encode())
+        result = pubkey.verify_final(signature)
+        if result > 0:
+            return True
+        return False

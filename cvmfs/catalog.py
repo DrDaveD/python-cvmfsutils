@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -11,8 +10,8 @@ import hashlib
 import os
 
 
-from _common import _split_md5, DatabaseObject
-from dirent  import DirectoryEntry, Chunk
+from ._common import _split_md5, DatabaseObject
+from .dirent  import DirectoryEntry, Chunk
 
 
 class CatalogIterator:
@@ -31,7 +30,7 @@ class CatalogIterator:
         return self
 
 
-    def next(self):
+    def __next__(self):
         if not self._has_more():
             raise StopIteration()
         return self._recursion_step()
@@ -233,7 +232,7 @@ class Catalog(DatabaseObject):
         real_path = self._canonicalize_path(path)
         if real_path == '/':
             real_path = ''
-        parent_1, parent_2 = _split_md5(hashlib.md5(real_path).digest())
+        parent_1, parent_2 = _split_md5(hashlib.md5(real_path.encode()).digest())
         return self.list_directory_split_md5(parent_1, parent_2)
 
 
@@ -251,7 +250,7 @@ class Catalog(DatabaseObject):
     def find_directory_entry(self, path):
         """ Finds the DirectoryEntry for a given path """
         real_path = self._canonicalize_path(path)
-        md5path = hashlib.md5(real_path)
+        md5path = hashlib.md5(real_path.encode())
         return self.find_directory_entry_md5(md5path)
 
 
@@ -273,7 +272,7 @@ class Catalog(DatabaseObject):
     def backtrace_path_split_md5(self, md5path_1, md5path_2):
         """ finds the file path associated with a given MD5 hash """
         catalog_root_path = self.root_prefix if self.root_prefix != "/" else ""
-        root_md5_hash     = _split_md5(hashlib.md5(catalog_root_path).digest())
+        root_md5_hash     = _split_md5(hashlib.md5(catalog_root_path.encode()).digest())
         result = ""
         while True:
             res = self.run_sql("SELECT parent_1, parent_2, name          \

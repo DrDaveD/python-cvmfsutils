@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
 This file is part of the CernVM File System auxiliary tools.
 """
 
-from _common import _binary_buffer_to_hex_string
+from ._common import _binary_buffer_to_hex_string
 
 
 class _Flags:

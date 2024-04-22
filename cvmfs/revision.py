@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by José Molina
@@ -7,7 +6,7 @@ This file is part of the CernVM File System auxiliary tools.
 
 import collections
 
-from _exceptions import NestedCatalogNotFound
+from ._exceptions import NestedCatalogNotFound
 
 
 class RevisionIterator(object):
@@ -32,17 +31,17 @@ class RevisionIterator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         full_path, dirent = self._get_next_dirent()
         if dirent.is_nested_catalog_mountpoint():
             self._fetch_and_push_catalog(full_path)
-            return self.next()  # same directory entry is also in nested catalog
+            return next(self)  # same directory entry is also in nested catalog
         return full_path, dirent
 
     def _get_next_dirent(self):
         try:
-            return self._get_current_catalog().catalog_iterator.next()
-        except StopIteration, e:
+            return next(self._get_current_catalog().catalog_iterator)
+        except StopIteration as e:
             self._pop_catalog()
             if not self._has_more():
                 raise StopIteration()
@@ -97,7 +96,7 @@ class CatalogTreeIterator(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if not self._has_more():
             raise StopIteration()
         catalog = self._pop_catalog()

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
@@ -11,13 +10,11 @@ import requests
 import zlib
 
 import cvmfs
-from _exceptions import *
-from cache import DummyCache, DiskCache
+from ._exceptions import *
+from .cache import DummyCache, DiskCache
 
-class Fetcher(object):
+class Fetcher(object, metaclass=abc.ABCMeta):
     """ Abstract wrapper around a Fetcher """
-
-    __metadata__ = abc.ABCMeta
 
     def __init__(self, source, cache_dir = None):
         self.__cache = DiskCache(cache_dir) if cache_dir else DummyCache()
@@ -81,7 +78,7 @@ class LocalFetcher(Fetcher):
     def _retrieve_file(self, file_name, cached_file):
         full_path = self._make_file_uri(file_name)
         if os.path.exists(full_path):
-            compressed_file = open(full_path, 'r')
+            compressed_file = open(full_path, 'rb')
             decompressed_content = zlib.decompress(compressed_file.read())
             compressed_file.close()
             cached_file.write(decompressed_content)

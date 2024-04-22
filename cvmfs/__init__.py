@@ -1,20 +1,19 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created by René Meusel
 This file is part of the CernVM File System auxiliary tools.
 """
 
-from root_file    import IncompleteRootFileSignature
-from manifest     import *
-from whitelist    import *
-from certificate  import *
-from repository   import *
-from availability import *
-from cache        import *
-from fetcher      import *
-from _common      import _split_md5
-from _common      import _combine_md5
+from .root_file    import IncompleteRootFileSignature
+from .manifest     import *
+from .whitelist    import *
+from .certificate  import *
+from .repository   import *
+from .availability import *
+from .cache        import *
+from .fetcher      import *
+from ._common      import _split_md5
+from ._common      import _combine_md5
 
 import subprocess
 import re
@@ -53,16 +52,16 @@ def check_output(popen_args):
 
 def _get_server_version():
     try:
-        output = check_output(['cvmfs_server'])
+        output = check_output(['cvmfs_server']).decode()
         return __extract_version_string(output)
-    except OSError, e:
+    except OSError as e:
         raise ServerNotInstalled()
 
 
 def _get_client_version():
     try:
-        output = check_output(['cvmfs2', '--version'])
-    except OSError, e:
+        output = check_output(['cvmfs2', '--version']).decode()
+    except OSError as e:
         raise ClientNotInstalled()
     return __extract_version_string(output)
 
@@ -80,5 +79,5 @@ except (ServerNotInstalled, VersionNotDetected) as e:
 
 try:
     client_version = _get_client_version()
-except ClientNotInstalled, e:
+except ClientNotInstalled as e:
     has_client = False
