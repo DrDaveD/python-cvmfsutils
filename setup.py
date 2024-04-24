@@ -32,7 +32,7 @@ setup(
     'Topic :: System :: Systems Administration'
   ],
   packages=find_packages(),
-  scripts=['utils/big_catalogs', 'utils/catdirusage'],
+  scripts=['utils/big_catalogs', 'utils/catdirusage', 'utils/cvmfs_search'],
   zip_safe=False,
   test_suite='cvmfs.test',
   tests_require='xmlrunner',

@@ -6,6 +6,7 @@ import os
 import os.path
 import sqlite3
 import time
+import argparse
 
 CACHE_VERSION = "v1"
 
@@ -21,7 +22,7 @@ def get_cache_path():
 CACHE_PATH = get_cache_path()
 
 
-def index_repo(rev, output):
+def index_repo(rev, output, enable_index=True):
     db = sqlite3.connect(output + ".tmp")
 
     # Create the catalog table.
@@ -36,19 +37,20 @@ def index_repo(rev, output):
         )"""
     ).close()
 
-    # Create the indexes.
-    db.execute(
-        """
-        CREATE INDEX catalog_hash
-          ON catalog(hash);
-        """
-    ).close()
-    db.execute(
-        """
-        CREATE INDEX catalog_md5path
-          ON catalog(md5path_1, md5path_2);
-        """
-    ).close()
+    if enable_index:
+        # Create the indexes.
+        db.execute(
+            """
+            CREATE INDEX catalog_hash
+            ON catalog(hash);
+            """
+        ).close()
+        db.execute(
+            """
+            CREATE INDEX catalog_md5path
+            ON catalog(md5path_1, md5path_2);
+            """
+        ).close()
 
     for clg in rev.catalogs():
         print(clg)
@@ -91,7 +93,7 @@ def get_path(db: sqlite3.Connection, parent_1, parent_2):
         return os.path.join(parent, name)
 
 
-def search_cvmfs_repo(url):
+def search_cvmfs_repo(url, enable_index=True):
     repo_url, data_hash = url.split("/data/")
     data_hash = data_hash.replace("/", "")
 
@@ -102,7 +104,7 @@ def search_cvmfs_repo(url):
     database_cache = os.path.join(CACHE_PATH, revision.root_hash + ".db")
     if not os.path.exists(database_cache):
         print("indexing", repo_url)
-        index_repo(revision, database_cache)
+        index_repo(revision, database_cache, enable_index=enable_index)
 
     content_hash = bytes.fromhex(data_hash)
 
@@ -121,14 +123,21 @@ def search_cvmfs_repo(url):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("usage: cvmfs-search <url>")
-        print("search a CVMFS repository for all filepaths that match a given URL.")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(
+        description="Search CVMFS repositories for all files matching a given download URL."
+    )
+    parser.add_argument("url", type=str, help="A CVMFS URL to print the paths for.")
+    parser.add_argument(
+        "--db-index",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Add indexes to the created SQLite database. If you disable this the catalog will be created faster and take less disk space but searching will be slower. (Enabled by default)",
+    )
+    args = parser.parse_args()
 
     if not os.path.exists(CACHE_PATH):
         os.makedirs(CACHE_PATH)
 
-    names = search_cvmfs_repo(sys.argv[1])
+    names = search_cvmfs_repo(args.url, args.db_index)
     for name in names:
         print(name)
