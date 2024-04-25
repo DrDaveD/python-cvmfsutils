@@ -128,10 +128,11 @@ if __name__ == "__main__":
     )
     parser.add_argument("url", type=str, help="A CVMFS URL to print the paths for.")
     parser.add_argument(
-        "--db-index",
+        "--no-db-index",
+        dest="db_index",
+        action="store_false",
         default=True,
-        action=argparse.BooleanOptionalAction,
-        help="Add indexes to the created SQLite database. If you disable this the catalog will be created faster and take less disk space but searching will be slower. (Enabled by default)",
+        help="Don't add indexes to the created SQLite database. If you use this the catalog will be created faster and take less disk space but searching will be slower.",
     )
     args = parser.parse_args()
 
