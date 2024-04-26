@@ -1,3 +1,5 @@
+changelog entries after 0.3.0 are in rpm/python-cvmfsutils.spec instead
+
 0.3.0:
   * Add RepoInfo class to read repository JSON meta data
   * Add Revision class

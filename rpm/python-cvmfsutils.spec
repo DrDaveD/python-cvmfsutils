@@ -1,4 +1,4 @@
-# OBS expects the name %release_prefix; do not change the name
+# OBS expects the name %%release_prefix; do not change the name
 %define release_prefix 1
 
 Summary: Inspect CernVM-FS repositories
@@ -32,12 +32,10 @@ files) and the history of named snapshots inside any CernVM-FS repository.
 %autosetup -n %{name}-%{version}
 
 %build
-#python3 setup.py build
-%py3_build_wheel
+python3 setup.py build
 
 %install
-#python3 setup.py install --single-version-externally-managed -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
-%py3_install_wheel python_cvmfsutils-%{version}-*.whl
+python3 setup.py install --single-version-externally-managed -O1 --root=$RPM_BUILD_ROOT --record=INSTALLED_FILES
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -49,6 +47,10 @@ rm -rf $RPM_BUILD_ROOT
 %{python3_sitelib}/*
 
 %changelog
+* Fri Apr 26 2024 Dave Dykstra <dwd@fnal.gov>> - 0.5.0-1
+- Convert from python2 to python3
+- Add cvmfs_search util
+
 * Fri Aug 09 2019 Dave Dykstra <dwd@fnal.gov>> - 0.4.2-1
 - Prevent crashing on new "Y" .cvmfspublished key
 
