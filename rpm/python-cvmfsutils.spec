@@ -14,12 +14,10 @@ BuildArch: noarch
 Vendor: Rene Meusel <rene.meusel@cern.ch>
 Url: http://cernvm.cern.ch
 
-BuildRequires: python-rpm-macros
-BuildRequires: python3-rpm-macros
-BuildRequires: python%{python3_pkgversion}-setuptools
+BuildRequires: python3-setuptools
 
-Requires: python%{python3_pkgversion}-dateutil
-Requires: python%{python3_pkgversion}-requests
+Requires: python3-dateutil
+Requires: python3-requests
 
 %description
 The CernVM-FS python package allows for the inspection of CernVM-FS
