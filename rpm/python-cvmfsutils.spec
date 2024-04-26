@@ -14,6 +14,7 @@ BuildArch: noarch
 Vendor: Rene Meusel <rene.meusel@cern.ch>
 Url: http://cernvm.cern.ch
 
+BuildRequires: python3
 BuildRequires: python3-rpm-macros
 BuildRequires: python3-setuptools
 
