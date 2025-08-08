@@ -36,7 +36,7 @@ class VersionNotDetected(Exception):
 
 
 def __extract_version_string(input_str):
-    match = re.search('.*([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*).*', input_str)
+    match = re.search(r'.*([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*).*', input_str)
     if not match or len(match.groups()) != 1:
         raise VersionNotDetected(input_str)
     return match.groups()[0]
