@@ -409,5 +409,3 @@ class Catalog(DatabaseObject):
             raise Exception("Catalog lacks a root prefix entry")
         if not hasattr(self, 'last_modified'):
             raise Exception("Catalog lacks a last modification entry")
-
-

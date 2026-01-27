@@ -50,7 +50,7 @@ rm -rf $RPM_BUILD_ROOT
 %{python3_sitelib}/*
 
 %changelog
-* Wed Aug 13 2025 CI Build - @VERSION@-1
+* Wed Aug 13 2025 Chris Burr <christopher.burr@cern.ch> - @VERSION@-1
 - Modernize build system to use setup.cfg with setuptools
 - Update to use setuptools-scm for version management  
 - Keep minimal setup.py for compatibility
