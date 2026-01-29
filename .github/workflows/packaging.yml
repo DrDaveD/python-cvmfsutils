@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        alma-version: ["8", "9"]
+        alma-version: ["8", "9", "10"]
     container: 
       image: almalinux:${{ matrix.alma-version }}
       

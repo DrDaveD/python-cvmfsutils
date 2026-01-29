@@ -85,7 +85,7 @@ CI tests across multiple platforms:
 
 - **Python versions**: 3.8-3.12
 - **Operating systems**: Ubuntu, macOS (Intel/ARM)
-- **RPM builds**: AlmaLinux 8/9, openSUSE Leap 15.5/15.6, openSUSE Tumbleweed
+- **RPM builds**: AlmaLinux 8/9/10, openSUSE Leap 15.5/15.6, openSUSE Tumbleweed
 
 Local testing:
 
