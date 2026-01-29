@@ -17,44 +17,60 @@ pixi run generate-spec
 
 ## Version Management
 
-The project uses `setuptools-scm` for automatic version management from git tags. The version is automatically determined from:
+The project uses two version sources:
 
-1. Git tags (for releases)
-2. Git commit hash and distance from last tag (for development versions)
+1. **Python package version**: `setuptools-scm` derives the version from git tags
+2. **RPM spec version**: Extracted from the first changelog entry in `rpm/python-cvmfsutils.spec.in`
 
 ## RPM Packaging
 
-### Automatic Spec File Generation
+### Spec File Generation
 
-The RPM spec file is generated automatically to avoid the need for external macros in the OpenSUSE Build System (OBS):
+The RPM spec file is generated from a template to avoid external macros in the OpenSUSE Build System (OBS):
 
-- **Template**: `rpm/python-cvmfsutils.spec.in` contains placeholders for version
-- **Generator**: `generate_spec.py` reads the template and substitutes the current version from setuptools-scm
-- **Output**: `rpm/python-cvmfsutils.spec` contains the final spec file with embedded version
+- **Template**: `rpm/python-cvmfsutils.spec.in` contains `@VERSION@` placeholders
+- **Generator**: `generate_spec.py` extracts the version from the first changelog entry
+- **Output**: `rpm/python-cvmfsutils.spec` is the generated file (checked into git for OBS)
 
-To generate the spec file manually:
+The changelog is the single source of truth for the RPM version.
 
-```bash
-python generate_spec.py
-# or using pixi:
-pixi run generate-spec
-```
+### Release Workflow
+
+1. Update the changelog in `rpm/python-cvmfsutils.spec.in` with the new version:
+   ```
+   %changelog
+   * Wed Jan 29 2026 Your Name <email@example.com> - 0.6.0-1
+   - Release notes here
+   ```
+
+2. Regenerate the spec file:
+   ```bash
+   pixi run generate-spec
+   ```
+
+3. Commit both files, tag, and release:
+   ```bash
+   git add rpm/python-cvmfsutils.spec.in rpm/python-cvmfsutils.spec
+   git commit -m "release: 0.6.0"
+   git tag v0.6.0
+   git push --tags
+   ```
 
 ### CI/CD Integration
 
 The GitHub Actions workflows automatically:
 
-1. Generate the spec file with the correct version
+1. Verify the checked-in spec matches the generated output
 2. Build RPMs for AlmaLinux 8/9 and openSUSE Leap/Tumbleweed
 3. Test installation and functionality
-4. Verify version consistency between setuptools-scm and the spec file
+4. Publish to PyPI on release
 
 ### OpenSUSE Build System (OBS) Compatibility
 
-The generated spec file is designed to work with OBS without requiring external macros:
+The generated spec file works with OBS without requiring external macros:
 
 - No `%{version}` macro usage - version is embedded directly
-- Single source for version information via setuptools-scm
+- Spec file is checked into git so OBS can read it
 - Template-based generation ensures consistency
 
 ## Package Structure

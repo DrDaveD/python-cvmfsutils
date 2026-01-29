@@ -34,7 +34,7 @@ cvmfs hash.
 
 ## Installation
 
-Rpms are available in the cvmfs-contrib yum repositories for EL6 & 7.
+Rpms are available in the cvmfs-contrib yum repositories for current versions of Enterprise Linux.
 See https://cvmfs-contrib.github.io for instructions to enable one
 of those repositories. Then to install simply do:
 

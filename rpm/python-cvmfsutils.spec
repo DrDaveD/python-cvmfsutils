@@ -3,12 +3,12 @@
 
 Summary: Inspect CernVM-FS repositories
 Name: python-cvmfsutils
-Version: @VERSION@
+Version: 0.6.0
 Release: %{release_prefix}%{?dist}
-Source0: cvmfsutils-@VERSION@.tar.gz
+Source0: cvmfsutils-0.6.0.tar.gz
 License: (c) 2015 CERN - BSD License
 Group: Development/Libraries
-BuildRoot: %{_tmppath}/%{name}-@VERSION@-%{release}-buildroot
+BuildRoot: %{_tmppath}/%{name}-0.6.0-%{release}-buildroot
 Prefix: %{_prefix}
 BuildArch: noarch
 Vendor: Rene Meusel <rene.meusel@cern.ch>
@@ -30,14 +30,14 @@ hierarchy, inspect CernVM-FS repository manifests (a.k.a. .cvmfspublished
 files) and the history of named snapshots inside any CernVM-FS repository.
 
 %prep
-#%%setup -n %{name}-@VERSION@ -n %{name}-@VERSION@
-%autosetup -n cvmfsutils-@VERSION@
+#%%setup -n %{name}-0.6.0 -n %{name}-0.6.0
+%autosetup -n cvmfsutils-0.6.0
 
 %build
 # No build step needed - pip install handles everything
 
 %install
-python3 -m pip install --no-deps --root=%{buildroot} %{_sourcedir}/cvmfsutils-@VERSION@.tar.gz
+python3 -m pip install --no-deps --root=%{buildroot} %{_sourcedir}/cvmfsutils-0.6.0.tar.gz
 
 %clean
 rm -rf $RPM_BUILD_ROOT

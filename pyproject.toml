@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools_scm]
 write_to = "src/cvmfs/_version.py"
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64"]
 
