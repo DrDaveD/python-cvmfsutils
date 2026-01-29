@@ -21,7 +21,11 @@ BuildRequires: python3-setuptools
 
 Requires: python3-dateutil
 Requires: python3-requests
+%if 0%{?suse_version}
+Requires: python3-M2Crypto
+%else
 Requires: python3-m2crypto
+%endif
 
 %description
 The CernVM-FS python package allows for the inspection of CernVM-FS
