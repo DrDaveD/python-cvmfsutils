@@ -5,7 +5,7 @@ Summary: Inspect CernVM-FS repositories
 Name: python-cvmfsutils
 Version: @VERSION@
 Release: %{release_prefix}%{?dist}
-Source0: cvmfsutils-@VERSION@.tar.gz
+Source0: %{name}-@VERSION@.tar.gz
 License: (c) 2015 CERN - BSD License
 Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-@VERSION@-%{release}-buildroot
@@ -31,13 +31,13 @@ files) and the history of named snapshots inside any CernVM-FS repository.
 
 %prep
 #%%setup -n %{name}-@VERSION@ -n %{name}-@VERSION@
-%autosetup -n cvmfsutils-@VERSION@
+%autosetup -n %{name}-@VERSION@
 
 %build
 # No build step needed - pip install handles everything
 
 %install
-python3 -m pip install --no-deps --root=%{buildroot} %{_sourcedir}/cvmfsutils-@VERSION@.tar.gz
+python3 -m pip install --no-deps --root=%{buildroot} %{_sourcedir}/%{name}-@VERSION@.tar.gz
 
 %clean
 rm -rf $RPM_BUILD_ROOT
