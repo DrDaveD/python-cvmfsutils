@@ -28,4 +28,3 @@ class TestMD5Handling(unittest.TestCase):
         digest = cvmfs._combine_md5(self.path_md5_lo, self.path_md5_hi)
         path_md5 = hashlib.md5(self.path.encode())
         self.assertEqual(path_md5.digest(), digest)
-

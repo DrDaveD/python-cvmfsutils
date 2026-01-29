@@ -122,11 +122,11 @@ def search_cvmfs_repo(url, enable_index=True):
     return ret
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="Search CVMFS repositories for all files matching a given download URL."
     )
-    parser.add_argument("url", type=str, help="A CVMFS URL to print the paths for.")
+    parser.add_argument("url", help="A CVMFS URL to print the paths for.")
     parser.add_argument(
         "--no-db-index",
         dest="db_index",
@@ -142,3 +142,7 @@ if __name__ == "__main__":
     names = search_cvmfs_repo(args.url, args.db_index)
     for name in names:
         print(name)
+
+
+if __name__ == "__main__":
+    main()
