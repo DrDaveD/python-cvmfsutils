@@ -299,4 +299,3 @@ class TestWhitelist(unittest.TestCase):
     def test_non_expired_whitelist(self):
         whitelist = cvmfs.Whitelist(self.time_valid_whitelist)
         self.assertFalse(whitelist.expired())
-

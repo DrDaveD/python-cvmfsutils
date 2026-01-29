@@ -27,9 +27,9 @@ def main():
         default=50,
         help="Minimum size in MB (default: 50)"
     )
-    
+
     args = parser.parse_args()
-    
+
     repo_identifier = args.repo_identifier
     bignum = args.bignum
     bigmb = args.bigmb

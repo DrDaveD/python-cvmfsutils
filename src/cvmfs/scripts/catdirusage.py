@@ -17,9 +17,9 @@ def main():
         "topdir",
         help="Top directory to analyze"
     )
-    
+
     args = parser.parse_args()
-    
+
     repo_identifier = args.repo_identifier
     toppath = args.topdir
 
