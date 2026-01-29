@@ -26,9 +26,6 @@ jobs:
     - name: Install setuptools-scm
       run: pip install setuptools-scm
 
-    - name: Generate RPM spec file
-      run: python generate_spec.py
-
     - name: Get version from spec
       id: version
       run: |
@@ -88,10 +85,14 @@ jobs:
         # Setup RPM build tree
         mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-        # Copy source tarball to SOURCES (renamed to match spec version)
-        cp "dist/cvmfsutils-${VERSION}.tar.gz" ~/rpmbuild/SOURCES/
+        # Rename source paths and make source tarball in SOURCES
+        cd dist
+        tar xzf cvmfsutils-${VERSION}.tar.gz
+        mv cvmfsutils-${VERSION} python-cvmfsutils-${VERSION}
+        tar czf ~/rpmbuild/SOURCES/python-cvmfsutils-${VERSION}.tar.gz python-cvmfsutils-${VERSION}
+        cd ..
 
-        # Copy spec file to SPECS (now includes version, no macros needed)
+        # Copy spec file to SPECS
         cp rpm/python-cvmfsutils.spec ~/rpmbuild/SPECS/
 
         # Build the RPM (no version macro needed since it's in the spec file)
@@ -192,10 +193,14 @@ jobs:
         # Setup RPM build tree
         mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 
-        # Copy source tarball to SOURCES (renamed to match spec version)
-        cp "dist/cvmfsutils-${VERSION}.tar.gz" ~/rpmbuild/SOURCES/
+        # Rename source paths and make source tarball in SOURCES
+        cd dist
+        tar xzf cvmfsutils-${VERSION}.tar.gz
+        mv cvmfsutils-${VERSION} python-cvmfsutils-${VERSION}
+        tar czf ~/rpmbuild/SOURCES/python-cvmfsutils-${VERSION}.tar.gz python-cvmfsutils-${VERSION}
+        cd ..
 
-        # Copy spec file to SPECS (already has version embedded)
+        # Copy spec file to SPECS
         cp rpm/python-cvmfsutils.spec ~/rpmbuild/SPECS/
 
         # Build the RPM (set topdir since SUSE defaults to /usr/src/packages)
