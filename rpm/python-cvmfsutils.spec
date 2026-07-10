@@ -5,7 +5,7 @@ Summary: Inspect CernVM-FS repositories
 Name: python-cvmfsutils
 Version: 0.6.0
 Release: %{release_prefix}%{?dist}
-Source0: cvmfsutils-0.6.0.tar.gz
+Source0: %{name}-0.6.0.tar.gz
 License: (c) 2015 CERN - BSD License
 Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-0.6.0-%{release}-buildroot
@@ -14,14 +14,19 @@ BuildArch: noarch
 Vendor: Rene Meusel <rene.meusel@cern.ch>
 Url: http://cernvm.cern.ch
 
-BuildRequires: python3
-BuildRequires: python3-rpm-macros
-BuildRequires: python3-pip
-BuildRequires: python3-setuptools
+%if 0%{?rhel} == 8
+%define PYV python38
+%else
+%define PYV python3
+%endif
+BuildRequires: %{PYV}
+BuildRequires: %{PYV}-rpm-macros
+BuildRequires: %{PYV}-pip
+BuildRequires: %{PYV}-setuptools
 
-Requires: python3-dateutil
-Requires: python3-requests
-Requires: python3-cryptography
+Requires: %{PYV}-dateutil
+Requires: %{PYV}-requests
+Requires: %{PYV}-cryptography
 
 %description
 The CernVM-FS python package allows for the inspection of CernVM-FS
@@ -31,13 +36,16 @@ files) and the history of named snapshots inside any CernVM-FS repository.
 
 %prep
 #%%setup -n %{name}-0.6.0 -n %{name}-0.6.0
-%autosetup -n cvmfsutils-0.6.0
+%autosetup -n %{name}-0.6.0
 
 %build
 # No build step needed - pip install handles everything
 
 %install
-python3 -m pip install --no-deps --root=%{buildroot} %{_sourcedir}/cvmfsutils-0.6.0.tar.gz
+%if 0%{?rhel} == 9
+export SETUPTOOLS_SCM_PRETEND_VERSION=0.6.0
+%endif
+python3 -m pip install --no-deps -v --root=%{buildroot} %{_sourcedir}/%{name}-0.6.0.tar.gz
 
 %clean
 rm -rf $RPM_BUILD_ROOT
