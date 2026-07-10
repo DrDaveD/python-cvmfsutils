@@ -55,16 +55,22 @@ jobs:
       timeout-minutes: 10
       run: |
         dnf update -y
-        dnf install -y git rpm-build rpm-devel python3-pip python3-devel python3-setuptools
-        dnf install -y python3-requests python3-dateutil python3-cryptography
+        dnf install -y git rpm-build rpm-devel
 
         # Enable PowerTools/CRB for additional packages
         if [ "${{ matrix.alma-version }}" = "8" ]; then
           dnf config-manager --set-enabled powertools || true
+          # need epel for python38-dateutil
+          dnf install -y epel-release
+          PYV=python38
         else
           dnf config-manager --set-enabled crb || true
           dnf install -y python3-pyproject-rpm-macros || true
+          PYV=python3
         fi
+
+        dnf install -y $PYV $PYV-pip $PYV-setuptools $PYV-rpm-macros
+        dnf install -y $PYV-requests $PYV-dateutil $PYV-cryptography
 
         # No build tools needed - installing from pre-built source distribution
 
@@ -76,6 +82,10 @@ jobs:
 
     - name: Build RPM from spec file
       run: |
+        # Define cache space to keep pip happy
+        export PIP_CACHE_DIR=$PWD/pipcache
+        mkdir -p $PIP_CACHE_DIR
+
         # Extract version from spec file
         VERSION=$(grep "^Version:" rpm/python-cvmfsutils.spec | awk '{print $2}')
         echo "Building version: $VERSION"

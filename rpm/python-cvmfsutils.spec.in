@@ -14,14 +14,19 @@ BuildArch: noarch
 Vendor: Rene Meusel <rene.meusel@cern.ch>
 Url: http://cernvm.cern.ch
 
-BuildRequires: python3
-BuildRequires: python3-rpm-macros
-BuildRequires: python3-pip
-BuildRequires: python3-setuptools
+%if 0%{?rhel} == 8
+%define PYV python38
+%else
+%define PYV python3
+%endif
+BuildRequires: %{PYV}
+BuildRequires: %{PYV}-rpm-macros
+BuildRequires: %{PYV}-pip
+BuildRequires: %{PYV}-setuptools
 
-Requires: python3-dateutil
-Requires: python3-requests
-Requires: python3-cryptography
+Requires: %{PYV}-dateutil
+Requires: %{PYV}-requests
+Requires: %{PYV}-cryptography
 
 %description
 The CernVM-FS python package allows for the inspection of CernVM-FS
@@ -37,7 +42,10 @@ files) and the history of named snapshots inside any CernVM-FS repository.
 # No build step needed - pip install handles everything
 
 %install
-python3 -m pip install --no-deps --root=%{buildroot} %{_sourcedir}/%{name}-@VERSION@.tar.gz
+%if 0%{?rhel} == 9
+export SETUPTOOLS_SCM_PRETEND_VERSION=@VERSION@
+%endif
+python3 -m pip install --no-deps -v --root=%{buildroot} %{_sourcedir}/%{name}-@VERSION@.tar.gz
 
 %clean
 rm -rf $RPM_BUILD_ROOT
