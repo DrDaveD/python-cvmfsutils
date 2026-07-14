@@ -60,10 +60,12 @@ rm -rf $RPM_BUILD_ROOT
 %{python3_sitelib}/*
 
 %changelog
-# - Update python used on rhel8 from python36 to python38.  Uses dependent
-#   packages from epel.
-# - Update building to work when there's no network connectivity
-# - Replace M2Crypto dependency with cryptography library
+* Tue Jul 14 2026 Dave Dykstra <dwd@fnal.gov>> - 0.6.0-1
+- Update python used on rhel8 from python36 to python38.  Uses dependent
+  packages from epel.
+- Update building to work when there's no network connectivity
+- Replace M2Crypto dependency with cryptography library
+- Support shake128 hashes
 
 * Wed Aug 13 2025 Chris Burr <christopher.burr@cern.ch> - 0.6.0-1
 - Modernize build system to use pyproject.toml with setuptools
