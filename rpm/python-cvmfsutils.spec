@@ -16,13 +16,16 @@ Url: http://cernvm.cern.ch
 
 %if 0%{?rhel} == 8
 %define PYV python38
+%define PYCMD python3.8
 %else
 %define PYV python3
+%define PYCMD python3
 %endif
 BuildRequires: %{PYV}
 BuildRequires: %{PYV}-rpm-macros
 BuildRequires: %{PYV}-pip
 BuildRequires: %{PYV}-setuptools
+BuildRequires: %{PYV}-wheel
 
 Requires: %{PYV}-dateutil
 Requires: %{PYV}-requests
@@ -45,7 +48,7 @@ files) and the history of named snapshots inside any CernVM-FS repository.
 %if 0%{?rhel} == 9
 export SETUPTOOLS_SCM_PRETEND_VERSION=0.6.0
 %endif
-python3 -m pip install --no-deps -v --root=%{buildroot} %{_sourcedir}/%{name}-0.6.0.tar.gz
+%PYCMD -m pip install --no-deps --no-build-isolation -v --root=%{buildroot} %{_sourcedir}/%{name}-0.6.0.tar.gz
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -57,6 +60,9 @@ rm -rf $RPM_BUILD_ROOT
 %{python3_sitelib}/*
 
 %changelog
+# - Update python used on rhel8 from python36 to python38.  Uses dependent
+#   packages from epel.
+# - Update building to work when there's no network connectivity
 # - Replace M2Crypto dependency with cryptography library
 
 * Wed Aug 13 2025 Chris Burr <christopher.burr@cern.ch> - 0.6.0-1

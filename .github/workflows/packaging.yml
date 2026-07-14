@@ -47,8 +47,13 @@ jobs:
         alma-version: ["8", "9", "10"]
     container:
       image: almalinux:${{ matrix.alma-version }}
+      options: --privileged  # needed to enable user namespaces
 
     steps:
+    - name: Enable user namespaces # needed to enable net namespaces
+      run: |
+        echo 0 | tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
     - uses: actions/checkout@v4
 
     - name: Install system dependencies
@@ -69,7 +74,7 @@ jobs:
           PYV=python3
         fi
 
-        dnf install -y $PYV $PYV-pip $PYV-setuptools $PYV-rpm-macros
+        dnf install -y $PYV $PYV-pip $PYV-setuptools $PYV-rpm-macros $PYV-wheel
         dnf install -y $PYV-requests $PYV-dateutil $PYV-cryptography
 
         # No build tools needed - installing from pre-built source distribution
@@ -104,7 +109,8 @@ jobs:
         cp rpm/python-cvmfsutils.spec ~/rpmbuild/SPECS/
 
         # Build the RPM (no version macro needed since it's in the spec file)
-        rpmbuild -ba ~/rpmbuild/SPECS/python-cvmfsutils.spec
+        #  and make sure it is not using the network
+        unshare -Un rpmbuild -ba ~/rpmbuild/SPECS/python-cvmfsutils.spec
 
         # Copy built RPMs back to dist/
         cp ~/rpmbuild/RPMS/noarch/*.rpm dist/
@@ -175,13 +181,18 @@ jobs:
             artifact: "tumbleweed"
     container:
       image: ${{ matrix.image }}
+      options: --privileged
 
     steps:
+    - name: Enable user namespaces
+      run: |
+        echo 0 | tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
     - name: Install system dependencies
       timeout-minutes: 10
       run: |
         zypper refresh
-        zypper install -y tar gzip git rpm-build python3-pip python3-devel python3-setuptools
+        zypper install -y tar gzip git rpm-build python3-pip python3-devel python3-setuptools python3-wheel
         zypper install -y python3-requests python3-dateutil python3-cryptography
 
     - uses: actions/checkout@v4
@@ -212,7 +223,7 @@ jobs:
         cp rpm/python-cvmfsutils.spec ~/rpmbuild/SPECS/
 
         # Build the RPM (set topdir since SUSE defaults to /usr/src/packages)
-        rpmbuild -ba --define "_topdir $HOME/rpmbuild" ~/rpmbuild/SPECS/python-cvmfsutils.spec
+        unshare -Un rpmbuild -ba --define "_topdir $HOME/rpmbuild" ~/rpmbuild/SPECS/python-cvmfsutils.spec
 
         # Copy built RPMs back to dist/
         cp ~/rpmbuild/RPMS/noarch/*.rpm dist/
